@@ -1,0 +1,25 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Profile pictures
+    match /profile-pictures/{userId}/{filename} {
+      // Allow users to read anyone's profile picture
+      allow read;
+      // Only allow users to upload their own profile picture
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Issue media files
+    match /issue-media/{issueId}/{filename} {
+      // Anyone can view issue media
+      allow read;
+      // Only authenticated users can upload issue media
+      allow write: if request.auth != null;
+    }
+    
+    // Deny access to all other files by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

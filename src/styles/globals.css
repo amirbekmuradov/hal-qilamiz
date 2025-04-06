@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles can go below */
+:root {
+  --color-primary: #0072CE;  /* uz-blue */
+  --color-green: #00A650;    /* uz-green */
+  --color-red: #CE1126;      /* uz-red */
+}
+
+body {
+  @apply bg-gray-50;
+}
+
+/* Any custom component styles can be added here */
