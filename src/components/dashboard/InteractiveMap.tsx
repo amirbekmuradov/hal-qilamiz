@@ -197,7 +197,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({
           {metricType === 'totalIssues' ? 'Issue Count' : 'Resolution Rate'}
         </div>
         <div className="flex items-center">
-          <div className="w-full h-2 bg-gradient-to-r from-blue-600 to-blue-200"></div>
+          {metricType === 'totalIssues' ? (
+            <div className="w-full h-2 bg-gradient-to-r from-blue-600 to-blue-200"></div>
+          ) : (
+            <div className="w-full h-2 bg-gradient-to-r from-green-500 to-red-500"></div>
+          )}
           <div className="flex justify-between w-full mt-1">
             <span>High</span>
             <span>Low</span>

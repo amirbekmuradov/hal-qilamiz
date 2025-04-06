@@ -5,20 +5,9 @@ import { createIssue as apiCreateIssue,
          getIssueById as apiGetIssueById,
          voteOnIssue as apiVoteOnIssue,
          commentOnIssue as apiCommentOnIssue,
-         subscribeToIssue as apiSubscribeToIssue } from '../../services/api';
-
-export enum IssueStatus {
-  PENDING = 'PENDING',
-  IN_PROGRESS = 'IN_PROGRESS',
-  RESOLVED = 'RESOLVED',
-  CLOSED = 'CLOSED'
-}
-
-export enum IssuePriority {
-    IMPORTANT = 'Important',
-    VERY_IMPORTANT = 'Very Important',
-    URGENT = 'Urgent'
-  }
+         subscribeToIssue as apiSubscribeToIssue,
+         getTrendingIssues as apiGetTrendingIssues,
+         getTackledIssues as apiGetTackledIssues } from '../../services/api';
 
 // Define the state structure
 interface IssuesState {
@@ -36,9 +25,68 @@ interface IssuesState {
   };
 }
 
+// Helper function to determine if we should use mock data
+const useMockData = () => process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true' || !process.env.NEXT_PUBLIC_API_URL;
+
+// Helper functions for mock data persistence
+const getMockIssues = () => {
+  if (typeof window === 'undefined') {
+    // Return empty array during server-side rendering
+    return [];
+  }
+  
+  // Client-side: get from localStorage
+  const stored = localStorage.getItem('mockIssues');
+  if (!stored) {
+    // Initialize with some default mock data
+    const defaultMockIssues = [{
+      id: '1',
+      title: 'Water supply interruption in Yunusabad district',
+      description: 'Frequent water supply interruptions in Yunusabad district blocks 14-18. The problem has been ongoing for the past two weeks.',
+      status: IssueStatus.PENDING,
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      author: {
+        id: '1',
+        firstName: 'Alisher',
+        lastName: 'Usmanov',
+        profilePictureUrl: null
+      },
+      location: { 
+        regionId: 'tashkent', 
+        regionName: 'Tashkent', 
+        isNationwide: false 
+      },
+      votes: { 
+        Important: 24, 
+        'Very Important': 68, 
+        Urgent: 133, 
+        total: 225 
+      },
+      comments: [],
+      subscribers: [],
+      isEscalated: true,
+      mediaUrls: []
+    }];
+    localStorage.setItem('mockIssues', JSON.stringify(defaultMockIssues));
+    return defaultMockIssues;
+  }
+  
+  try {
+    return JSON.parse(stored);
+  } catch (e) {
+    return [];
+  }
+};
+
+const saveMockIssues = (issues: Issue[]) => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem('mockIssues', JSON.stringify(issues));
+};
+
 // Initial state
 const initialState: IssuesState = {
-  issues: [],
+  issues: [],  // Start with empty array, will be populated after mount
   trendingIssues: [],
   tackledIssues: [],
   userIssues: [],
@@ -57,74 +105,15 @@ export const fetchIssues = createAsyncThunk(
   'issues/fetchIssues',
   async (_, { rejectWithValue, getState }) => {
     try {
-      // For development, return mock data
-      // In production, we'd use the API
-      return {
-        issues: [
-          {
-            id: '1',
-            title: 'Water supply interruption in Yunusabad district',
-            description: 'Frequent water supply interruptions in Yunusabad district blocks 14-18. The problem has been ongoing for the past two weeks.',
-            status: IssueStatus.PENDING,
-            createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-            updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-            author: {
-              id: '1',
-              firstName: 'Alisher',
-              lastName: 'Usmanov',
-              profilePictureUrl: null
-            },
-            location: { 
-              regionId: 'tashkent', 
-              regionName: 'Tashkent', 
-              isNationwide: false 
-            },
-            votes: { 
-              Important: 24, 
-              'Very Important': 68, 
-              Urgent: 133, 
-              total: 225 
-            },
-            comments: [],
-            subscribers: [],
-            isEscalated: true,
-            mediaUrls: []
-          },
-          {
-            id: '2',
-            title: 'Road repair needed on Amir Temur street',
-            description: 'Large potholes on Amir Temur street causing traffic jams and posing danger to vehicles.',
-            status: IssueStatus.IN_PROGRESS,
-            createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-            updatedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
-            author: {
-              id: '2',
-              firstName: 'Dilnoza',
-              lastName: 'Karimova',
-              profilePictureUrl: null
-            },
-            location: { 
-              regionId: 'tashkent', 
-              regionName: 'Tashkent', 
-              isNationwide: false 
-            },
-            votes: { 
-              Important: 41, 
-              'Very Important': 87, 
-              Urgent: 56, 
-              total: 184 
-            },
-            comments: [],
-            subscribers: [],
-            isEscalated: false,
-            mediaUrls: []
-          }
-        ]
-      };
-      
-      // Actual API call for production
-      // const response = await apiGetIssues(getState().issues.filter);
-      // return response;
+      if (useMockData()) {
+        // Get issues from localStorage
+        const issues = getMockIssues();
+        return { issues };
+      } else {
+        const state = getState() as { issues: IssuesState };
+        const response = await apiGetIssues(state.issues.filter);
+        return response;
+      }
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to fetch issues');
     }
@@ -201,194 +190,76 @@ export const fetchIssueById = createAsyncThunk(
 );
 
 export const fetchTrendingIssues = createAsyncThunk(
-    'issues/fetchTrendingIssues',
-    async (_, { rejectWithValue }) => {
-      try {
-        // Mock data for trending issues
-        return {
-          trendingIssues: [
-            {
-              id: 'tr1',
-              title: 'Garbage overflow in Shaykhontohur',
-              description: 'Garbage bins overflowing, causing health concerns.',
-              status: IssueStatus.PENDING,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              author: {
-                id: 'user1',
-                firstName: 'Shirin',
-                lastName: 'Azizova',
-                profilePictureUrl: null,
-              },
-              location: {
-                regionId: 'tashkent',
-                regionName: 'Tashkent',
-                isNationwide: false,
-              },
-              votes: {
-                Important: 12,
-                'Very Important': 25,
-                Urgent: 8,
-                total: 45,
-              },
-              comments: [],
-              subscribers: [],
-              isEscalated: false,
-              mediaUrls: [],
-            },
-          ],
-        };
-      } catch (err: any) {
-        return rejectWithValue(err.message || 'Failed to fetch trending issues');
-      }
+  'issues/fetchTrendingIssues',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiGetTrendingIssues();
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch trending issues');
     }
-  );
-
-  // Add this thunk to your issuesSlice.ts file after the fetchTrendingIssues thunk:
+  }
+);
 
 export const fetchTackledIssues = createAsyncThunk(
-    'issues/fetchTackledIssues',
-    async (_, { rejectWithValue }) => {
-      try {
-        // Mock data for tackled/resolved issues
-        return {
-          tackledIssues: [
-            {
-              id: 'resolved1',
-              title: 'Street lighting fixed in Chilanzar district',
-              description: 'Street lights have been repaired and are now functioning properly.',
-              status: IssueStatus.RESOLVED,
-              createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-              updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-              author: {
-                id: 'user2',
-                firstName: 'Nodira',
-                lastName: 'Ismoilova',
-                profilePictureUrl: null,
-              },
-              location: {
-                regionId: 'tashkent',
-                regionName: 'Tashkent',
-                isNationwide: false,
-              },
-              votes: {
-                Important: 32,
-                'Very Important': 47,
-                Urgent: 18,
-                total: 97,
-              },
-              comments: [],
-              subscribers: [],
-              isEscalated: false,
-              mediaUrls: [],
-            },
-            {
-              id: 'resolved2',
-              title: 'Playground renovated in Mirzo Ulugbek district',
-              description: 'The children\'s playground has been renovated with new equipment and safety features.',
-              status: IssueStatus.RESOLVED,
-              createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-              updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-              author: {
-                id: 'user3',
-                firstName: 'Jahongir',
-                lastName: 'Otajonov',
-                profilePictureUrl: null,
-              },
-              location: {
-                regionId: 'tashkent',
-                regionName: 'Tashkent',
-                isNationwide: false,
-              },
-              votes: {
-                Important: 24,
-                'Very Important': 38,
-                Urgent: 12,
-                total: 74,
-              },
-              comments: [],
-              subscribers: [],
-              isEscalated: false,
-              mediaUrls: [],
-            },
-            {
-              id: 'resolved3',
-              title: 'Pothole repairs completed on Bobur street',
-              description: 'The large potholes on Bobur street have been filled and repaved.',
-              status: IssueStatus.RESOLVED,
-              createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-              updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-              author: {
-                id: 'user4',
-                firstName: 'Feruza',
-                lastName: 'Mamadalieva',
-                profilePictureUrl: null,
-              },
-              location: {
-                regionId: 'tashkent',
-                regionName: 'Tashkent',
-                isNationwide: false,
-              },
-              votes: {
-                Important: 18,
-                'Very Important': 26,
-                Urgent: 21,
-                total: 65,
-              },
-              comments: [],
-              subscribers: [],
-              isEscalated: false,
-              mediaUrls: [],
-            }
-          ]
-        };
-      } catch (err: any) {
-        return rejectWithValue(err.message || 'Failed to fetch tackled issues');
-      }
+  'issues/fetchTackledIssues',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiGetTackledIssues();
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch tackled issues');
     }
-  );
+  }
+);
 
 // Add the missing createIssue thunk
 export const createIssue = createAsyncThunk(
   'issues/createIssue',
   async (issueData: Partial<Issue>, { rejectWithValue }) => {
     try {
-      // In a real app, we'd call the API to create the issue
-      // const response = await apiCreateIssue(issueData);
-      // return response;
-      
-      // For development, mock the response
-      const mockIssue: Issue = {
-        id: Math.random().toString(36).substring(2, 11),
-        title: issueData.title || 'New Issue',
-        description: issueData.description || 'Issue description',
-        status: issueData.status || IssueStatus.PENDING,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        author: {
-          id: '1',
-          firstName: 'Current',
-          lastName: 'User',
-          profilePictureUrl: null
-        },
-        location: issueData.location || { 
-          regionId: 'tashkent', 
-          regionName: 'Tashkent', 
-          isNationwide: false 
-        },
-        votes: { 
-          Important: 0, 
-          'Very Important': 0, 
-          Urgent: 0, 
-          total: 0 
-        },
-        comments: [],
-        subscribers: ['1'],
-        isEscalated: false,
-        mediaUrls: issueData.mediaUrls || []
-      };
-      
-      return { issue: mockIssue };
+      if (useMockData()) {
+        // Mock response
+        const mockIssue: Issue = {
+          id: Math.random().toString(36).substring(2, 11),
+          title: issueData.title || 'New Issue',
+          description: issueData.description || 'Issue description',
+          status: issueData.status || IssueStatus.PENDING,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          author: {
+            id: '1',
+            firstName: 'Current',
+            lastName: 'User',
+            profilePictureUrl: null
+          },
+          location: issueData.location || { 
+            regionId: 'tashkent', 
+            regionName: 'Tashkent', 
+            isNationwide: false 
+          },
+          votes: { 
+            Important: 0, 
+            'Very Important': 0, 
+            Urgent: 0, 
+            total: 0 
+          },
+          comments: [],
+          subscribers: ['1'],
+          isEscalated: false,
+          mediaUrls: issueData.mediaUrls || []
+        };
+
+        // Get existing issues and add the new one
+        const existingIssues = getMockIssues();
+        const updatedIssues = [mockIssue, ...existingIssues];
+        saveMockIssues(updatedIssues);
+        
+        return { issue: mockIssue };
+      } else {
+        const response = await apiCreateIssue(issueData);
+        return response;
+      }
     } catch (error: any) {
       return rejectWithValue(error.message || 'Failed to create issue');
     }
@@ -478,6 +349,11 @@ const issuesSlice = createSlice({
     clearFilters(state) {
       state.filter = initialState.filter;
     },
+    initializeMockData(state) {
+      if (useMockData()) {
+        state.issues = getMockIssues();
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchTackledIssues.pending, (state) => {
@@ -515,6 +391,9 @@ const issuesSlice = createSlice({
     builder.addCase(fetchIssues.fulfilled, (state, action) => {
       state.isLoading = false;
       state.issues = action.payload.issues;
+      if (useMockData()) {
+        saveMockIssues(state.issues);
+      }
     });
     builder.addCase(fetchIssues.rejected, (state, action) => {
       state.isLoading = false;
@@ -542,9 +421,9 @@ const issuesSlice = createSlice({
     });
     builder.addCase(createIssue.fulfilled, (state, action) => {
       state.isLoading = false;
-      // Add the new issue to the issues array
-      if (action.payload && action.payload.issue) {
-        state.issues.push(action.payload.issue);
+      state.issues = [action.payload.issue, ...state.issues];
+      if (useMockData()) {
+        saveMockIssues(state.issues);
       }
     });
     builder.addCase(createIssue.rejected, (state, action) => {
@@ -593,5 +472,5 @@ const issuesSlice = createSlice({
   },
 });
 
-export const { setFilter, clearFilters } = issuesSlice.actions;
+export const { setFilter, clearFilters, initializeMockData } = issuesSlice.actions;
 export default issuesSlice.reducer;

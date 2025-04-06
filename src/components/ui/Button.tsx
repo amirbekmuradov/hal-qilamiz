@@ -36,14 +36,14 @@ const Button: React.FC<ButtonProps> = ({
     lg: 'px-6 py-3 text-lg',
   };
   
-  // Variant classes
+  // Variant classes - using Uzbekistan national colors where appropriate
   const variantClasses = {
-    primary: 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
+    primary: 'bg-uz-blue text-white hover:bg-blue-700 focus:ring-uz-blue',
     secondary: 'bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-    success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500',
-    outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus:ring-primary-500',
-    ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-primary-500',
+    danger: 'bg-uz-red text-white hover:bg-red-700 focus:ring-uz-red',
+    success: 'bg-uz-green text-white hover:bg-green-700 focus:ring-uz-green',
+    outline: 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus:ring-uz-blue',
+    ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-uz-blue',
   };
   
   // Width classes

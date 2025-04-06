@@ -15,10 +15,8 @@ if (!MONGODB_URI) {
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    await mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    // In newer versions of Mongoose (6+), useNewUrlParser and useUnifiedTopology are default
+    await mongoose.connect(MONGODB_URI);
     
     console.log('MongoDB connected successfully');
   } catch (error) {

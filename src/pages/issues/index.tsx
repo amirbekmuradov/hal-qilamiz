@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { AppDispatch } from '../../store';
-import { setFilter } from '../../store/slices/issuesSlice';
+import { setFilter, initializeMockData } from '../../store/slices/issuesSlice';
 import { IssueStatus } from '../../types/issue';
 import Layout from '../../components/layout/Layout';
 import IssuesList from '../../components/issues/IssuesList';
@@ -13,6 +13,11 @@ export default function IssuesPage() {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   const { region, status, q } = router.query;
+
+  useEffect(() => {
+    // Initialize mock data on client side
+    dispatch(initializeMockData());
+  }, [dispatch]);
 
   useEffect(() => {
     // Set filters based on URL query parameters

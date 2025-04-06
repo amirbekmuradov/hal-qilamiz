@@ -1,0 +1,173 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "karakalpakstan",
+        "name": "Qoraqalpogʻiston Respublikasi",
+        "name_en": "Republic of Karakalpakstan"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[58.0, 46.0], [62.0, 46.0], [62.0, 42.0], [58.0, 42.0], [58.0, 46.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "khorezm",
+        "name": "Xorazm viloyati",
+        "name_en": "Khorezm Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[58.0, 42.0], [60.0, 42.0], [60.0, 41.0], [58.0, 41.0], [58.0, 42.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "navoi",
+        "name": "Navoiy viloyati",
+        "name_en": "Navoi Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[62.0, 44.0], [65.0, 44.0], [65.0, 41.0], [62.0, 41.0], [62.0, 44.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bukhara",
+        "name": "Buxoro viloyati",
+        "name_en": "Bukhara Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[62.0, 41.0], [65.0, 41.0], [65.0, 39.0], [62.0, 39.0], [62.0, 41.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kashkadarya",
+        "name": "Qashqadaryo viloyati",
+        "name_en": "Kashkadarya Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[65.0, 40.0], [67.0, 40.0], [67.0, 38.5], [65.0, 38.5], [65.0, 40.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "surkhandarya",
+        "name": "Surxondaryo viloyati",
+        "name_en": "Surkhandarya Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[67.0, 39.0], [68.5, 39.0], [68.5, 37.0], [67.0, 37.0], [67.0, 39.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "samarkand",
+        "name": "Samarqand viloyati",
+        "name_en": "Samarkand Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[65.0, 41.5], [67.0, 41.5], [67.0, 40.0], [65.0, 40.0], [65.0, 41.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "jizzakh",
+        "name": "Jizzax viloyati",
+        "name_en": "Jizzakh Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[67.0, 41.5], [68.5, 41.5], [68.5, 40.5], [67.0, 40.5], [67.0, 41.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sirdaryo",
+        "name": "Sirdaryo viloyati",
+        "name_en": "Sirdaryo Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[68.5, 41.5], [69.5, 41.5], [69.5, 40.5], [68.5, 40.5], [68.5, 41.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tashkent-region",
+        "name": "Toshkent viloyati",
+        "name_en": "Tashkent Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[69.5, 42.0], [71.0, 42.0], [71.0, 41.0], [69.5, 41.0], [69.5, 42.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tashkent",
+        "name": "Toshkent shahri",
+        "name_en": "Tashkent City"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[69.8, 41.8], [70.2, 41.8], [70.2, 41.5], [69.8, 41.5], [69.8, 41.8]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "namangan",
+        "name": "Namangan viloyati",
+        "name_en": "Namangan Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[71.0, 42.0], [72.0, 42.0], [72.0, 41.0], [71.0, 41.0], [71.0, 42.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "fergana",
+        "name": "Fargʻona viloyati",
+        "name_en": "Fergana Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[71.0, 41.0], [72.0, 41.0], [72.0, 40.0], [71.0, 40.0], [71.0, 41.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "andijan",
+        "name": "Andijon viloyati",
+        "name_en": "Andijan Region"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[72.0, 41.5], [73.0, 41.5], [73.0, 40.5], [72.0, 40.5], [72.0, 41.5]]]
+      }
+    }
+  ]
+} 

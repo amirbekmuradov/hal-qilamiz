@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store';
 import { fetchTrendingIssues, fetchTackledIssues } from '../store/slices/issuesSlice';
+import { openModal } from '../store/slices/uiSlice';
 import { getTrendingUsers } from '../services/api';
 import Layout from '../components/layout/Layout';
 import IssueCard from '../components/issues/IssueCard';
@@ -31,20 +32,25 @@ export default function Home() {
                 A platform for citizens of Uzbekistan to report and track community issues until they are resolved.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                <Button 
-                  variant="primary" 
+                <Button
+                  variant="primary"
                   size="lg"
-                  className="bg-white text-uz-blue hover:bg-gray-100"
+                  className="w-full sm:w-auto border-white text-white hover:bg-white hover:text-uz-blue transition-colors duration-200"
+                  onClick={() => {
+                    dispatch(openModal('login'));
+                  }}
                 >
                   Report an Issue
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg"
-                  className="border-white text-white hover:bg-white hover:bg-opacity-10"
-                >
-                  Browse Issues
-                </Button>
+                <Link href="/issues">
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="w-full sm:w-auto border-white text-white hover:bg-white hover:text-uz-blue transition-colors duration-200"
+                  >
+                    Browse Issues
+                  </Button>
+                </Link>
               </div>
             </div>
             <div className="mt-12 lg:mt-0">
@@ -129,36 +135,16 @@ export default function Home() {
           )}
 
           <div className="mt-8 text-center">
-            <Button variant="outline" as={Link} href="/issues">
-              View More Issues
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Recently Tackled */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">Recently Tackled</h2>
-            <Link href="/issues?status=Resolved" className="text-uz-blue hover:text-uz-blue-dark">
-              View all tackled issues
+            <Link href="/issues">
+              <Button variant="outline">
+                View More Issues
+              </Button>
             </Link>
           </div>
-
-          {isLoading ? (
-            <div className="flex justify-center my-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-uz-blue"></div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {tackledIssues.slice(0, 3).map((issue) => (
-                <IssueCard key={issue.id} issue={issue} isCompact={true} />
-              ))}
-            </div>
-          )}
         </div>
       </section>
+
+      {/* Removed "Recently Tackled" section as requested */}
 
       {/* Statistics */}
       <section className="py-16 bg-uz-blue text-white">
@@ -201,7 +187,7 @@ export default function Home() {
               variant="primary" 
               size="lg"
               onClick={() => {
-                // Open registration modal
+                dispatch(openModal('register'));
               }}
             >
               Create an Account

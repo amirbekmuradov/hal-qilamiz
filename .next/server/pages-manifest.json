@@ -2,8 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/issues": "pages/issues.js",
-  "/dashboard": "pages/dashboard.js",
   "/regions": "pages/regions.js",
-  "/": "pages/index.js"
+  "/dashboard": "pages/dashboard.js",
+  "/issues": "pages/issues.js",
+  "/auth/login": "pages/auth/login.js",
+  "/issues/[id]": "pages/issues/[id].js"
 }

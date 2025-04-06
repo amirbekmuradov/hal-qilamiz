@@ -1,136 +1,119 @@
 import { useEffect, useState } from 'react';
-import { getAllRegions } from '../../services/api';
+import { useRouter } from 'next/router';
 import Layout from '../../components/layout/Layout';
-import Link from 'next/link';
-import { Region } from '../../types/region';
+import UzbekistanMap from '../../components/regions/UzbekistanMap';
+import { fetchRegionStats } from '../../services/api';
+
+interface RegionStats {
+  id: string;
+  name: string;
+  issueCount: number;
+  resolvedCount: number;
+  activeIssues: number;
+  population: number;
+}
 
 export default function RegionsPage() {
-  const [regions, setRegions] = useState<Region[]>([]);
+  const router = useRouter();
+  const [regionStats, setRegionStats] = useState<RegionStats[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
+
   useEffect(() => {
-    const fetchRegions = async () => {
+    const loadRegionStats = async () => {
       try {
-        setIsLoading(true);
-        const response = await getAllRegions();
-        setRegions(response.regions);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching regions:', err);
-        setError('Failed to load regions. Please try again later.');
+        const stats = await fetchRegionStats();
+        setRegionStats(stats);
+      } catch (error) {
+        console.error('Error loading region stats:', error);
       } finally {
         setIsLoading(false);
       }
     };
-    
-    fetchRegions();
+
+    loadRegionStats();
   }, []);
-  
-  // Map of Uzbekistan regions (simplified for demonstration)
-  const renderMap = () => (
-    <div className="bg-white p-4 rounded-lg shadow-md">
-      <svg 
-        viewBox="0 0 800 500" 
-        className="w-full h-auto"
-        style={{ maxHeight: '500px' }}
-      >
-        {/* This would be a proper SVG map of Uzbekistan with paths for each region */}
-        {/* For this example, we're using a placeholder */}
-        <rect x="0" y="0" width="800" height="500" fill="#f0f0f0" />
-        <text x="400" y="250" textAnchor="middle" fontSize="18">
-          Map of Uzbekistan Regions
-        </text>
-        <text x="400" y="280" textAnchor="middle" fontSize="14" fill="#666">
-          (Interactive map would be implemented here)
-        </text>
-      </svg>
-    </div>
-  );
-  
+
+  const handleRegionClick = (regionId: string) => {
+    router.push(`/regions/${regionId}`);
+  };
+
   return (
     <Layout title="Regions - Hal Qilamiz">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Regions</h1>
-        
-        {/* Map of Uzbekistan */}
-        <div className="mb-10">
-          {renderMap()}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Regions</h1>
+          <p className="mt-2 text-sm text-gray-500">
+            Explore issues and progress across different regions of Uzbekistan
+          </p>
         </div>
-        
-        {/* Loading state */}
-        {isLoading && (
+
+        {isLoading ? (
           <div className="flex justify-center my-8">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-uz-blue"></div>
           </div>
-        )}
-        
-        {/* Error state */}
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg
-                  className="h-5 w-5 text-red-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
+        ) : (
+          <>
+            {/* Interactive Map */}
+            <div className="mb-8">
+              <UzbekistanMap
+                regions={regionStats}
+                onRegionClick={handleRegionClick}
+              />
             </div>
-          </div>
-        )}
-        
-        {/* List of regions */}
-        {!isLoading && !error && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {regions.map((region) => (
-              <Link 
-                key={region.id} 
-                href={`/regions/${region.code}`}
-                className="block"
-              >
-                <div className="h-full bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="h-40 bg-gray-200 relative">
-                    {region.imageUrl ? (
-                      <img
-                        src={region.imageUrl}
-                        alt={region.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-uz-blue bg-opacity-10">
-                        <span className="text-2xl font-bold text-uz-blue">
-                          {region.name.charAt(0)}
-                        </span>
+
+            {/* Region Statistics */}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {regionStats.map((region) => (
+                <div
+                  key={region.id}
+                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                  onClick={() => handleRegionClick(region.id)}
+                >
+                  <h3 className="text-lg font-semibold text-gray-900">{region.name}</h3>
+                  <div className="mt-4 space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Total Issues:</span>
+                      <span className="font-medium">{region.issueCount}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Resolved:</span>
+                      <span className="font-medium text-green-600">{region.resolvedCount}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Active Issues:</span>
+                      <span className="font-medium text-orange-500">{region.activeIssues}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Population:</span>
+                      <span className="font-medium">{region.population.toLocaleString()}</span>
+                    </div>
+                    <div className="pt-2">
+                      <div className="relative pt-1">
+                        <div className="flex mb-2 items-center justify-between">
+                          <div>
+                            <span className="text-xs font-semibold inline-block text-gray-500">
+                              Resolution Rate
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-xs font-semibold inline-block text-gray-500">
+                              {((region.resolvedCount / region.issueCount) * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                        </div>
+                        <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+                          <div
+                            style={{ width: `${(region.resolvedCount / region.issueCount) * 100}%` }}
+                            className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-uz-blue"
+                          ></div>
+                        </div>
                       </div>
-                    )}
-                  </div>
-                  <div className="p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">{region.name}</h2>
-                    {region.description && (
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                        {region.description}
-                      </p>
-                    )}
-                    <div className="flex justify-between items-center text-sm text-gray-500">
-                      <span>Population: {region.population.toLocaleString()}</span>
-                      <span className="text-uz-blue">View Details →</span>
                     </div>
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </Layout>

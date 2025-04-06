@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchIssues, setFilter, clearFilters, IssueStatus } from '../../store/slices/issuesSlice';
-import { RootState } from '../../store';
+import { fetchIssues, setFilter, clearFilters } from '../../store/slices/issuesSlice';
+import { IssueStatus } from '../../types/issue';
+import { RootState, AppDispatch } from '../../store';
 import IssueCard from './IssueCard';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
@@ -55,7 +56,7 @@ const IssuesList: React.FC<IssuesListProps> = ({
   statusFilter = null,
   initialSearchQuery = '',
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { issues, isLoading, error, filter } = useSelector((state: RootState) => state.issues);
   
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
@@ -144,9 +145,9 @@ const IssuesList: React.FC<IssuesListProps> = ({
                 onChange={handleStatusChange}
               >
                 <option value="">All Statuses</option>
-                <option value={IssueStatus.PENDING}>Pending</option>
-                <option value={IssueStatus.IN_PROGRESS}>In Progress</option>
-                <option value={IssueStatus.RESOLVED}>Resolved</option>
+                <option value="PENDING">Pending</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="RESOLVED">Resolved</option>
               </select>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Issue, IssueStatus } from '../types/issue';
-import { User, UserProfile } from '../types/user';
+import { UserProfile } from '../types/user';
 import { Region, RegionStatistics } from '../types/region';
 
 // Create axios instance with base URL
@@ -116,8 +116,75 @@ export const getIssues = async (filters: any = {}) => {
 };
 
 export const getTrendingIssues = async () => {
-  const response = await api.get('/issues/trending');
-  return response.data;
+  // For development, return mock data
+  // In production, uncomment the API call
+  // const response = await api.get('/issues/trending');
+  // return response.data;
+  
+  return {
+    trendingIssues: [
+      {
+        id: '1',
+        title: 'Water supply interruption in Yunusabad district',
+        description: 'Frequent water supply interruptions in Yunusabad district blocks 14-18. The problem has been ongoing for the past two weeks.',
+        status: IssueStatus.PENDING,
+        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        author: {
+          id: '1',
+          firstName: 'Alisher',
+          lastName: 'Usmanov',
+          profilePictureUrl: null
+        },
+        location: { regionId: 'tashkent', regionName: 'Tashkent', isNationwide: false },
+        votes: { Important: 24, 'Very Important': 68, Urgent: 133, total: 225 },
+        comments: Array(12).fill({}),
+        subscribers: ['1', '2', '3'],
+        isEscalated: true,
+        mediaUrls: []
+      },
+      {
+        id: '2',
+        title: 'Road repair needed on Amir Temur street',
+        description: 'Large potholes on Amir Temur street causing traffic jams and posing danger to vehicles.',
+        status: IssueStatus.IN_PROGRESS,
+        createdAt: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+        updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        author: {
+          id: '2',
+          firstName: 'Dilnoza',
+          lastName: 'Karimova',
+          profilePictureUrl: null
+        },
+        location: { regionId: 'tashkent', regionName: 'Tashkent', isNationwide: false },
+        votes: { Important: 41, 'Very Important': 87, Urgent: 56, total: 184 },
+        comments: Array(23).fill({}),
+        subscribers: ['1', '3', '4'],
+        isEscalated: false,
+        mediaUrls: []
+      },
+      {
+        id: '3',
+        title: 'Garbage collection issues in Chilanzar district',
+        description: 'Garbage containers are overflowing and not being emptied regularly in Chilanzar district.',
+        status: IssueStatus.PENDING,
+        createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        author: {
+          id: '3',
+          firstName: 'Bobur',
+          lastName: 'Alimov',
+          profilePictureUrl: null
+        },
+        location: { regionId: 'tashkent', regionName: 'Tashkent', isNationwide: false },
+        votes: { Important: 52, 'Very Important': 78, Urgent: 41, total: 171 },
+        comments: Array(8).fill({}),
+        subscribers: ['2', '5', '6'],
+        isEscalated: false,
+        mediaUrls: []
+      },
+    ]
+  };
 };
 
 export const getTackledIssues = async () => {
@@ -412,6 +479,117 @@ export const getDashboardStatistics = async (params: any = {}) => {
       },
     ],
   };
+};
+
+export const fetchRegionStats = async () => {
+  // TODO: Replace with actual API call
+  // This is mock data for development
+  return [
+    {
+      id: 'tashkent',
+      name: 'Tashkent',
+      issueCount: 450,
+      resolvedCount: 380,
+      activeIssues: 70,
+      population: 2500000
+    },
+    {
+      id: 'andijan',
+      name: 'Andijan',
+      issueCount: 320,
+      resolvedCount: 250,
+      activeIssues: 70,
+      population: 1800000
+    },
+    {
+      id: 'bukhara',
+      name: 'Bukhara',
+      issueCount: 280,
+      resolvedCount: 200,
+      activeIssues: 80,
+      population: 1500000
+    },
+    {
+      id: 'fergana',
+      name: 'Fergana',
+      issueCount: 350,
+      resolvedCount: 290,
+      activeIssues: 60,
+      population: 2000000
+    },
+    {
+      id: 'jizzakh',
+      name: 'Jizzakh',
+      issueCount: 180,
+      resolvedCount: 120,
+      activeIssues: 60,
+      population: 900000
+    },
+    {
+      id: 'karakalpakstan',
+      name: 'Karakalpakstan',
+      issueCount: 220,
+      resolvedCount: 150,
+      activeIssues: 70,
+      population: 1200000
+    },
+    {
+      id: 'namangan',
+      name: 'Namangan',
+      issueCount: 300,
+      resolvedCount: 240,
+      activeIssues: 60,
+      population: 1700000
+    },
+    {
+      id: 'navoi',
+      name: 'Navoi',
+      issueCount: 150,
+      resolvedCount: 100,
+      activeIssues: 50,
+      population: 800000
+    },
+    {
+      id: 'kashkadarya',
+      name: 'Kashkadarya',
+      issueCount: 260,
+      resolvedCount: 190,
+      activeIssues: 70,
+      population: 1400000
+    },
+    {
+      id: 'samarkand',
+      name: 'Samarkand',
+      issueCount: 380,
+      resolvedCount: 300,
+      activeIssues: 80,
+      population: 2200000
+    },
+    {
+      id: 'sirdaryo',
+      name: 'Sirdaryo',
+      issueCount: 140,
+      resolvedCount: 90,
+      activeIssues: 50,
+      population: 600000
+    },
+    {
+      id: 'surkhandarya',
+      name: 'Surkhandarya',
+      issueCount: 200,
+      resolvedCount: 140,
+      activeIssues: 60,
+      population: 1100000
+    },
+    {
+      id: 'tashkent-region',
+      name: 'Tashkent Region',
+      issueCount: 420,
+      resolvedCount: 340,
+      activeIssues: 80,
+      population: 2300000
+    }
+  ];
 };
 
 export default api;

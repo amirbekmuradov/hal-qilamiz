@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}"
+self.__REACT_LOADABLE_MANIFEST="{\"..\\\\components\\\\regions\\\\UzbekistanMap.tsx -> react-leaflet\":{\"id\":\"..\\\\components\\\\regions\\\\UzbekistanMap.tsx -> react-leaflet\",\"files\":[\"static/chunks/node_modules_react-leaflet_lib_index_js.js\"]}}"
